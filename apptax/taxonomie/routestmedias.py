@@ -223,9 +223,9 @@ def delete_tmedias(id_media, id_role):
         {"ContentType": "application/json"},
     )
 
-
+@adresses.route("/thumbnail/bycdref/<int:cd_ref>", methods=["GET"])
 @adresses.route("/thumbnail/<int:id_media>", methods=["GET"])
-def getThumbnail_tmedias(id_media):
+def getThumbnail_tmedias(id_media=None, cd_ref=None):
     """
         Fonction qui génère une vignette d'un média existants
 
@@ -240,6 +240,13 @@ def getThumbnail_tmedias(id_media):
         ------
             Image générée
     """
+    
+    if not id_media :
+        try :
+            id_media = media_repo.get_and_format_media_filter_by(filters={"cd_ref": cd_ref, "id_type": 1})[0]["id_media"]
+        except (IndexError, KeyError) as e :
+            id_media = None
+            
     params = request.args
     pad = True
     size = (300, 400)
